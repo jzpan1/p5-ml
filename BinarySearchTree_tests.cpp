@@ -90,24 +90,6 @@ TEST(find_object_in_tree){
     ASSERT_EQUAL(it, it2);
 }
 
-TEST(find_object_in_tree){
-    BinarySearchTree<int> bst;
-
-    bst.insert(1);
-    bst.insert(2);
-    bst.insert(3);
-    bst.insert(4);
-    bst.insert(5);
-
-    BinarySearchTree<int>::Iterator it = bst.find(5);
-
-    *it = 10;
-
-    BinarySearchTree<int>::Iterator it2 = bst.find(10);
-
-    ASSERT_EQUAL(it, it2);
-}
-
 TEST(preOrder){
     BinarySearchTree<int> bst;
 
@@ -227,7 +209,6 @@ TEST(single_node_tests){
 
     ASSERT_TRUE(bst.check_sorting_invariant());
 
-    
 }
 
 TEST_MAIN()
