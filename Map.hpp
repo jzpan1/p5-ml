@@ -32,7 +32,13 @@ private:
 
   // A custom comparator
   class PairComp {
-  };
+    private:
+      Key_compare key_compare_instance;
+    public:
+      bool operator()(const Pair_type& pair1, const Pair_type& pair2) const {
+            return key_compare_instance(pair1.first, pair2.first);
+      }
+};
 
 public:
 
@@ -94,7 +100,8 @@ public:
   //       (key, value) pairs, you'll need to construct a dummy value
   //       using "Value_type()".
   Iterator find(const Key_type& k) const {
-    return bst.find(Pair_type(k, Value_type));
+    Pair_type dummy(k, Value_type());
+    return bst.find(dummy);
   }
 
   // MODIFIES: this
@@ -113,7 +120,18 @@ public:
   //           that element. This ensures the proper value-initialization is done.
   //
   // HINT: http://www.cplusplus.com/reference/map/map/operator[]/
-  Value_type& operator[](const Key_type& k);
+  Value_type& operator[](const Key_type& k) {
+    Iterator it = bst.find(Pair_type(k, Value_type()));
+
+    if (it != bst.end()) {
+        return it->second;
+    }
+
+    Pair_type elem(k, Value_type());
+    Iterator it2 = bst.insert(elem);
+
+    return it2->second;
+  }
 
   // MODIFIES: this
   // EFFECTS : Inserts the given element into this Map if the given key
@@ -123,17 +141,29 @@ public:
   //           false. Otherwise, inserts the given element and returns
   //           an iterator to the newly inserted element, along with
   //           the value true.
-  std::pair<Iterator, bool> insert(const Pair_type &val);
+  std::pair<Iterator, bool> insert(const Pair_type &val) {
+    Iterator it = find(val.first);
+    if(it != end()){
+      return std::pair<Iterator, bool>(it, false);
+    }
+    Iterator it1 = bst.insert(val);
+    return std::pair<Iterator, bool>(it1, true);
+  }
 
   // EFFECTS : Returns an iterator to the first key-value pair in this Map.
-  Iterator begin() const;
+  Iterator begin() const{
+    return bst.begin();
+  }
 
   // EFFECTS : Returns an iterator to "past-the-end".
-  Iterator end() const;
+  Iterator end() const{
+    return bst.end();
+  }
 
 private:
   // Add a BinarySearchTree private member HERE.
-  BinarySearchTree bst;
+  BinarySearchTree<Pair_type, PairComp> bst;
+  PairComp less;
 };
 
 // You may implement member functions below using an "out-of-line" definition

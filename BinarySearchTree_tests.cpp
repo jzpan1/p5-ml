@@ -206,6 +206,7 @@ TEST(min_max_element){
 
     BinarySearchTree<int>::Iterator it = bst.max_element();
     ASSERT_EQUAL(*it, 7);
+
     BinarySearchTree<int>::Iterator it1 = bst.min_element();
     ASSERT_EQUAL(*it1, 1);
 
@@ -214,6 +215,39 @@ TEST(min_max_element){
 
     BinarySearchTree<int>::Iterator it3 = bst.min_greater_than(1);
     ASSERT_EQUAL(*it3, 2);
+}
+
+TEST(large_scale_balance){
+    BinarySearchTree<int> bst;
+    const int size = 1000;
+    //This will be a stright line to the right hand side
+    for (int i = 0; i < size; ++i) {
+        bst.insert(i);
+    }
+    ASSERT_FALSE(bst.empty());
+    ASSERT_TRUE(bst.size() == 1000);
+    ASSERT_EQUAL(bst.height(), 1000);
+    ASSERT_TRUE(bst.check_sorting_invariant());
+}
+
+TEST(limit_test_plus_operator){
+    BinarySearchTree<int> bst;
+    const int size = 10;
+
+    for (int i = 0; i < size; ++i) {
+        bst.insert(i);
+    }
+
+    BinarySearchTree<int>::Iterator it = bst.begin();
+    for (int i = 0; i < size; ++i) {
+        ASSERT_EQUAL(*it, i);
+        ++it;
+    }
+
+    BinarySearchTree<int>::Iterator it1 = bst.begin();
+    for (int i = 0; i < size; ++i) {
+        ASSERT_EQUAL(*it1++, i);
+    }
 }
 
 TEST_MAIN()

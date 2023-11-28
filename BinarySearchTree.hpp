@@ -445,7 +445,7 @@ private:
   //       structure, and where the largest element lives.
   static Node * max_element_impl(Node *node) {
     if (empty_impl(node->right)) return node;
-    return min_element_impl(node->right);
+    return max_element_impl(node->right);
   }
 
 
