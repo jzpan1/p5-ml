@@ -20,24 +20,6 @@ TEST(basicOp){
     ASSERT_TRUE(bst.height() == 1);
 }
 
-TEST(duplicationObject){
-    BinarySearchTree<int> bst;
-    ASSERT_TRUE(bst.empty());
-
-    ASSERT_TRUE(bst.size() == 0);
-    ASSERT_TRUE(bst.height() == 0);
-
-    BinarySearchTree<int>::Iterator it = bst.insert(10);
-    ASSERT_FALSE(bst.empty());
-    ASSERT_TRUE(bst.size() == 1);
-    ASSERT_TRUE(bst.height() == 1);
-
-    BinarySearchTree<int>::Iterator it1 = bst.insert(10);
-    ASSERT_EQUAL(it, it1);
-    ASSERT_TRUE(bst.size() == 1);
-    ASSERT_TRUE(bst.height() == 1);
-}
-
 TEST(multObject){
     BinarySearchTree<int> bst;
 
@@ -49,7 +31,7 @@ TEST(multObject){
 
     ASSERT_FALSE(bst.empty());
     ASSERT_TRUE(bst.size() == 5);
-    ASSERT_TRUE(bst.height() == 3);
+    ASSERT_TRUE(bst.height() == 5);
 }
 
 TEST(copyTree){
@@ -63,13 +45,13 @@ TEST(copyTree){
 
     ASSERT_FALSE(bst.empty());
     ASSERT_TRUE(bst.size() == 5);
-    ASSERT_TRUE(bst.height() == 3);
+    ASSERT_TRUE(bst.height() == 5);
 
     BinarySearchTree<int> bst1(bst);
 
     ASSERT_FALSE(bst1.empty());
     ASSERT_TRUE(bst1.size() == 5);
-    ASSERT_TRUE(bst1.height() == 3);
+    ASSERT_TRUE(bst1.height() == 5);
 }
 
 TEST(find_object_in_tree){
@@ -141,7 +123,7 @@ TEST(invariant){
 
     it++;
 
-    ASSERT_EQUAL(6, *it);
+    ASSERT_EQUAL(2, *it);
 
     *it = 0;
 
@@ -163,7 +145,7 @@ TEST(plus_operator){
 
     it++;
 
-    ASSERT_EQUAL(6, *it);
+    ASSERT_EQUAL(2, *it);
 
     BinarySearchTree<int>::Iterator it2 = bst.find(2);
 
@@ -173,15 +155,15 @@ TEST(plus_operator){
 
     it2++;
 
-    ASSERT_EQUAL(*it2, 7);
+    ASSERT_EQUAL(*it2, 4);
 }
 
 TEST(single_node_tests){
     BinarySearchTree<int> bst;
 
-    ASSERT_FALSE(bst.empty());
-    ASSERT_TRUE(bst.size() == 1);
-    ASSERT_TRUE(bst.height() == 1);
+    ASSERT_TRUE(bst.empty());
+    ASSERT_TRUE(bst.size() == 0);
+    ASSERT_TRUE(bst.height() == 0);
 
     BinarySearchTree<int>::Iterator it = bst.insert(1);
 

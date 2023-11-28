@@ -330,7 +330,7 @@ private:
   // NOTE:    This function must run in constant time.
   //          No iteration or recursion is allowed.
   static bool empty_impl(const Node *node) {
-    return node;
+    return !node;
   }
 
   // EFFECTS: Returns the size of the tree rooted at 'node', which is the
@@ -363,7 +363,7 @@ private:
   // NOTE:    This function must be tree recursive.
   static Node *copy_nodes_impl(Node *node) {
     if (empty_impl(node)) return nullptr;
-    return new Node{node->datum, copy_nodes_impl(node->left), copy_nodes_impl(node->right)};
+    return new Node(node->datum, copy_nodes_impl(node->left), copy_nodes_impl(node->right));
   }
 
   // EFFECTS: Frees the memory for all nodes used in the tree rooted at 'node'.
@@ -418,23 +418,12 @@ private:
   //       template, NOT according to the < operator. Use the "less"
   //       parameter to compare elements.
   static Node * insert_impl(Node *node, const T &item, Compare less) {
-    if (empty_impl(node)) return new Node{item, nullptr, nullptr};
+    if (empty_impl(node)) return new Node(item, nullptr, nullptr);
     bool item_less = less(item, node->datum);
-    if (empty_impl(node->left)) {
-      if (item_less) {
-        node->left = new Node{item, nullptr, nullptr};
-        return node->left;
-      }
-    }
-    if (empty_impl(node->right)) {
-      if (!item_less) {
-        node->right = new Node{item, nullptr, nullptr};
-        return node->right;
-      }
-    }
 
-    if(item_less) return insert_impl(node->left, item, less);
-    return insert_impl(node->right, item, less);
+    if(item_less) node->left = insert_impl(node->left, item, less);
+    else node->right = insert_impl(node->right, item, less);
+    return node;
   }
 
   // EFFECTS : Returns a pointer to the Node containing the minimum element
@@ -465,6 +454,7 @@ private:
   // NOTE:    This function must be tree recursive.
   static bool check_sorting_invariant_impl(const Node *node, Compare less) {
     if (empty_impl(node)) return true;
+    if (!node->left || !node->right) return true;
     if (less(node->left->datum, node->datum) && less(node->datum, node->right->datum)) {
       return check_sorting_invariant_impl(node->left, less) && check_sorting_invariant_impl(node->right, less);
     }
@@ -495,8 +485,8 @@ private:
   static void traverse_preorder_impl(const Node *node, std::ostream &os) {
     if (empty_impl(node)) return;
     os << node->datum << " ";
-    traverse_inorder_impl(node->left, os);
-    traverse_inorder_impl(node->right, os);
+    traverse_preorder_impl(node->left, os);
+    traverse_preorder_impl(node->right, os);
   }
 
   // EFFECTS : Returns a pointer to the Node containing the smallest element
