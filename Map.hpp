@@ -59,13 +59,32 @@ public:
   // you should omit them. A user of the class must be able to create,
   // copy, assign, and destroy Maps.
 
+  Map() 
+  : bst() { }
+
+  Map(const Map& other)
+  : bst(other.bst) { }
+
+  Map& operator=(const Map& other) {
+    if (this != &other) {
+        bst = other.bst;
+    }
+    return *this;
+  }
+
+  ~Map()
+  { }
 
   // EFFECTS : Returns whether this Map is empty.
-  bool empty() const;
+  bool empty() const {
+    return bst.empty();
+  }
 
   // EFFECTS : Returns the number of elements in this Map.
   // NOTE : size_t is an integral type from the STL
-  size_t size() const;
+  size_t size() const {
+    return bst.size();
+  }
 
   // EFFECTS : Searches this Map for an element with a key equivalent
   //           to k and returns an Iterator to the associated value if found,
@@ -74,7 +93,9 @@ public:
   // HINT: Since Map is implemented using a BinarySearchTree that stores
   //       (key, value) pairs, you'll need to construct a dummy value
   //       using "Value_type()".
-  Iterator find(const Key_type& k) const;
+  Iterator find(const Key_type& k) const {
+    return bst.find(Pair_type(k, Value_type));
+  }
 
   // MODIFIES: this
   // EFFECTS : Returns a reference to the mapped value for the given
@@ -112,6 +133,7 @@ public:
 
 private:
   // Add a BinarySearchTree private member HERE.
+  BinarySearchTree bst;
 };
 
 // You may implement member functions below using an "out-of-line" definition

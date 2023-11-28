@@ -211,4 +211,27 @@ TEST(single_node_tests){
 
 }
 
+TEST(min_max_element){
+    BinarySearchTree<int> bst;
+
+    bst.insert(4);
+    bst.insert(2);
+    bst.insert(6);
+    bst.insert(1);
+    bst.insert(3);
+    bst.insert(5);
+    bst.insert(7);
+
+    BinarySearchTree<int>::Iterator it = bst.max_element();
+    ASSERT_EQUAL(*it, 7);
+    BinarySearchTree<int>::Iterator it1 = bst.min_element();
+    ASSERT_EQUAL(*it1, 1);
+
+    BinarySearchTree<int>::Iterator it2 = bst.min_greater_than(6);
+    ASSERT_EQUAL(*it2, 7);
+
+    BinarySearchTree<int>::Iterator it3 = bst.min_greater_than(1);
+    ASSERT_EQUAL(*it3, 2);
+}
+
 TEST_MAIN()
