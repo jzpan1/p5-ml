@@ -363,7 +363,8 @@ private:
   // NOTE:    This function must be tree recursive.
   static Node *copy_nodes_impl(Node *node) {
     if (empty_impl(node)) return nullptr;
-    return new Node(node->datum, copy_nodes_impl(node->left), copy_nodes_impl(node->right));
+    return new Node(node->datum, copy_nodes_impl(node->left), 
+                    copy_nodes_impl(node->right));
   }
 
   // EFFECTS: Frees the memory for all nodes used in the tree rooted at 'node'.
@@ -456,7 +457,8 @@ private:
     if (empty_impl(node)) return true;
     if (!node->left || !node->right) return true;
     if (less(node->left->datum, node->datum) && less(node->datum, node->right->datum)) {
-      return check_sorting_invariant_impl(node->left, less) && check_sorting_invariant_impl(node->right, less);
+      return check_sorting_invariant_impl(node->left, less) &&
+       check_sorting_invariant_impl(node->right, less);
     }
     return false;
   }

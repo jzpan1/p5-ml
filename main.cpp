@@ -40,13 +40,17 @@ class Classifier {
 			cout << "vocabulary size = " << vocabulary << "\n\n"
 			     << "classes:\n";
 			
-			for (map<string, int>::iterator it = label_posts.begin(); it != label_posts.end(); it++) {
-				cout << "  " << it->first << ", " << it->second << " examples, log-prior = " << log(static_cast<double>(it->second)/total_posts) << "\n";
+			for (map<string, int>::iterator it = label_posts.begin(); it != label_posts.end();
+					 it++) {
+				cout << "  " << it->first << ", " << it->second << " examples, log-prior = " 
+						 << log(static_cast<double>(it->second)/total_posts) << "\n";
 			}
 			
 			cout << "classifier parameters:\n";
 				for (auto it = label_word_posts.begin(); it != label_word_posts.end(); it++) {
-				cout << "  " << it->first.first << ":" << it->first.second << ", count = " << it->second << ", log-likelihood = " << makePredic(it->first.second, it->first.first) << "\n";
+				cout << "  " << it->first.first << ":" << it->first.second << ", count = " 
+						 << it->second << ", log-likelihood = " 
+						 << makePredic(it->first.second, it->first.first) << "\n";
 			}
 		}
 	}
@@ -61,14 +65,16 @@ class Classifier {
 		while (test_data >> row) {
 			map<string, double> label_scores; //This hold the label and their long scores
 
-			map<string, int>::iterator it = label_posts.begin(); //loops through all the labels that needs log-probability score 
+			//loops through all the labels that needs log-probability score
+			map<string, int>::iterator it = label_posts.begin();  
 
 			string label = row["tag"];
 			set<string> post_words = unique_words(row["content"]);
 
 			while(it != label_posts.end()) {
 				string predictLabel = it->first;
-				double logPredict = log(static_cast<double>(it->second)/total_posts); //initial lnP(C)
+				//initial lnP(C)
+				double logPredict = log(static_cast<double>(it->second)/total_posts); 
 				for(string word : post_words) {
 					double log_prob = makePredic(word, predictLabel);
 					if (log_prob == -INFINITY) throw runtime_error("WAHFDSIAJIAHJVDI");
@@ -89,13 +95,15 @@ class Classifier {
     		   		max_value = it1->second;
     			}
 			}
-			cout << "  correct = " << label << ", " << "predicted = " << nameLabel << ", " << "log-probability score = " << max_value << '\n';
+			cout << "  correct = " << label << ", " << "predicted = " << nameLabel << ", " 
+					 << "log-probability score = " << max_value << '\n';
 			cout << "  content = " << row["content"] << "\n\n";
 			if (label == nameLabel)
 				total_correct++;
 			total++;
 		}
-		cout << "performance: " << total_correct << " / " << total << " posts predicted correctly\n";
+		cout << "performance: " << total_correct << " / " << total
+				 << " posts predicted correctly\n";
 	}
  private:
 
@@ -105,12 +113,15 @@ class Classifier {
 
 		//word found within the given label
 		if (label_word_posts.find(label_word_pair) != label_word_posts.end()) { 
-			return log(static_cast<double>(label_word_posts[label_word_pair]) / label_posts[label]);
+			return log(static_cast<double>(label_word_posts[label_word_pair]) 
+					/ label_posts[label]);
 		} 
-		else if(word_posts.find(word) != word_posts.end()){ //word found outside of the given label
+		//word found outside of the given label
+		else if(word_posts.find(word) != word_posts.end()){
 			return log(static_cast<double>(word_posts[word]) / total_posts);
 		} 
-		else { //the word does not exist
+		//the word does not exist
+		else {
 			return log(1.0 / (total_posts));
 		}
 	}
