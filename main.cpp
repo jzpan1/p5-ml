@@ -8,9 +8,27 @@ using namespace std;
 
 class Classifier {
  public:
-	Classifier() {}
-	void train(csvstream &train_data) {
+	Classifier() : total_posts(0), vocabulary(0) {}
 
+	//REQUIRES: train_data is valid dataset
+	//MODIFIES: this Classifier
+	// EFFECTS: Updates classifier's internal maps with
+	// 					new data
+	void train(csvstream &train_data) {
+		map<string, string> row;
+		while (train_data >> row) {
+			total_posts++;
+
+			string label = row["tag"];
+			set<string> post_words = unique_words(row["content"]);
+			
+			label_posts[label]++;
+			for(const string &word : post_words) {
+				word_posts[word]++;
+				label_word_posts[make_pair(label, word)];
+			}
+		}
+		vocabulary = word_posts.size();
 	}
 	void predict(csvstream &test_data);
  private:
