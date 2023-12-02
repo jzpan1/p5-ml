@@ -32,47 +32,19 @@ class Classifier {
 		vocabulary = word_posts.size();
 	}
 	void predict(const csvstream &test_data){
-		map<string, string> post;
-		while(test_data >> post) {
-            // Calculate the log-probability scores for each label
-            std::map<std::string, double> label_scores;
 
-            for (const auto& label_count : label_posts) {
-                const std::string& label = label_count.first;
-                double log_prior = log(static_cast<double>(label_count.second) / total_posts);
-                double log_likelihood = 0.0;
-
-                for (const auto& word : post) {
-                    // Calculate log-likelihood based on whether the word is seen in training data
-                    double word_likelihood = getWordLikelihood(word, label);
-                    log_likelihood += word_likelihood;
-                }
-
-                label_scores[label] = log_prior + log_likelihood;
-            }
-
-            // Find the label with the highest log-probability score
-            auto max_label = std::max_element(
-                label_scores.begin(), label_scores.end(),
-                [](const auto& lhs, const auto& rhs) {
-                    return lhs.second < rhs.second;
-                }
-            );
-
-            std::cout << "Predicted Label: " << max_label->first << std::endl;
-        
-        }
 	}
  private:
- 	set<string> unique_words(const string &str) {
-  		istringstream source(str);
-  		set<string> words;
-  		string word;
-  		while (source >> word) {
-    	words.insert(word);
- 		}
-  		return words;
+	set<string> unique_words(const string &str) {
+		istringstream source(str);
+		set<string> words;
+		string word;
+		while (source >> word) {
+			words.insert(word);
+		}
+		return words;
 	}
+	
 	int total_posts;
 	int vocabulary;
 	map<string, int> word_posts;
@@ -84,15 +56,7 @@ void print_usage() {
 	cout << "Usage: main.exe TRAIN_FILE TEST_FILE [--debug]" << endl;
 }
 
-set<string> unique_words(const string &str) {
-  istringstream source(str);
-  set<string> words;
-  string word;
-  while (source >> word) {
-    words.insert(word);
-  }
-  return words;
-}
+
 
 int main(int argc, char* argv[]) {
 
