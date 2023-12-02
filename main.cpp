@@ -1,9 +1,33 @@
 #include <iostream>
 #include <fstream>
+#include <map>
 using namespace std;
+
+class Classifier {
+ public:
+	Classifier() {}
+	void train(ifstream train_data);
+	void predict(ifstream test_data);
+ private:
+	int total_posts;
+	int vocabulary;
+	map<string, int> word_posts;
+	map<string, int> label_posts;
+	map<pair<string, string>, int> label_word_posts;
+};
 
 void print_usage() {
 	cout << "Usage: main.exe TRAIN_FILE TEST_FILE [--debug]" << endl;
+}
+
+set<string> unique_words(const string &str) {
+  istringstream source(str);
+  set<string> words;
+  string word;
+  while (source >> word) {
+    words.insert(word);
+  }
+  return words;
 }
 
 int main(int argc, char* argv[]) {
