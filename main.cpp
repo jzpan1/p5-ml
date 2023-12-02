@@ -44,7 +44,7 @@ class Classifier {
 		}
 		return words;
 	}
-	
+
 	int total_posts;
 	int vocabulary;
 	map<string, int> word_posts;
@@ -55,8 +55,6 @@ class Classifier {
 void print_usage() {
 	cout << "Usage: main.exe TRAIN_FILE TEST_FILE [--debug]" << endl;
 }
-
-
 
 int main(int argc, char* argv[]) {
 
@@ -81,6 +79,9 @@ int main(int argc, char* argv[]) {
 		cout << "Error opening file: " << argv[2] << endl;
 		return 1;
 	}
-
-
+	Classifier classifier;
+	classifier.train(train_file);
+	classifier.predict(test_file);
+	
+	return 0;
 }
