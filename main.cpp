@@ -1,13 +1,18 @@
 #include <iostream>
-#include <fstream>
+#include <sstream>
 #include <map>
+#include <set>
+#include "csvstream.hpp"
+
 using namespace std;
 
 class Classifier {
  public:
 	Classifier() {}
-	void train(ifstream train_data);
-	void predict(ifstream test_data);
+	void train(csvstream &train_data) {
+
+	}
+	void predict(csvstream &test_data);
  private:
 	int total_posts;
 	int vocabulary;
@@ -41,8 +46,8 @@ int main(int argc, char* argv[]) {
 		}
   }
 
-	ifstream train_file(argv[1]);
-	ifstream test_file(argv[2]);
+	csvstream train_file(argv[1]);
+	csvstream test_file(argv[2]);
 	
 	if (!train_file) {
 		cout << "Error opening file: " << argv[1] << endl;
