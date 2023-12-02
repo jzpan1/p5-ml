@@ -26,7 +26,7 @@ class Classifier {
 			label_posts[label]++;
 			for(const string &word : post_words) {
 				word_posts[word]++;
-				label_word_posts[make_pair(label, word)];
+				label_word_posts[make_pair(label, word)]++;
 			}
 		}
 		vocabulary = word_posts.size();
@@ -52,6 +52,7 @@ class Classifier {
 				double logPredict = log(static_cast<double>(it->second)/total_posts); //initial lnP(C)
 				for(string word : post_words) {
 					double log_prob = makePredic(word, predictLabel);
+					if (log_prob == -INFINITY) throw runtime_error("WAHFDSIAJIAHJVDI");
 					logPredict += log_prob;
 
 				}
@@ -139,6 +140,6 @@ int main(int argc, char* argv[]) {
 	Classifier classifier;
 	classifier.train(train_file);
 	classifier.predict(test_file);
-	
+
 	return 0;
 }
