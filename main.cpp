@@ -15,13 +15,17 @@ class Classifier {
 	//MODIFIES: this Classifier
 	// EFFECTS: Updates classifier's internal maps with
 	// 					new data
-	void train(csvstream &train_data) {
+	void train(csvstream &train_data, bool debug) {
 		map<string, string> row;
+		if (debug) cout << "training data:\n";
 		while (train_data >> row) {
 			total_posts++;
 
 			string label = row["tag"];
 			set<string> post_words = unique_words(row["content"]);
+			if (debug) {
+				cout << "  label = " << label << ", content = " << row["content"] << "\n";
+			}
 			
 			label_posts[label]++;
 			for(const string &word : post_words) {
@@ -30,12 +34,27 @@ class Classifier {
 			}
 		}
 		vocabulary = word_posts.size();
+		cout << "trained on " << total_posts << " examples\n";
+
+		if (debug) {
+			cout << "vocabulary size = " << vocabulary << "\n\n"
+			     << "classes:\n";
+			
+			for (map<string, int>::iterator it = label_posts.begin(); it != label_posts.end(); it++) {
+				cout << "  " << it->first << ", " << it->second << " examples, log-prior = " << log(static_cast<double>(it->second)/total_posts) << "\n";
+			}
+			
+			cout << "classifier parameters:\n";
+				for (auto it = label_word_posts.begin(); it != label_word_posts.end(); it++) {
+				cout << "  " << it->first.first << ":" << it->first.second << ", count = " << it->second << ", log-likelihood = " << makePredic(it->first.second, it->first.first) << "\n";
+			}
+		}
 	}
 
-	void predict(csvstream &test_data){
+	void predict(csvstream &test_data, bool debug){
 		int total_correct = 0; //correcly predicted
 		int total = 0; //total data given
-		cout << "trained on " << total_posts << " examples" << "\n\n";
+
 		cout << "test data:" << '\n';
 
 		map<string, string> row;
@@ -70,27 +89,30 @@ class Classifier {
     		   		max_value = it1->second;
     			}
 			}
-			cout << " correct = " << label << ", " << "predicted = " << nameLabel << ", " << "log-probability score = " << max_value << '\n';
-			cout << " content = " << row["content"] << "\n\n";
+			cout << "  correct = " << label << ", " << "predicted = " << nameLabel << ", " << "log-probability score = " << max_value << '\n';
+			cout << "  content = " << row["content"] << "\n\n";
 			if (label == nameLabel)
 				total_correct++;
 			total++;
 		}
-		cout << "performance: " << total_correct << " / " << total << " posts predicted correctly";
+		cout << "performance: " << total_correct << " / " << total << " posts predicted correctly\n";
 	}
  private:
+
+
 	double makePredic(const std::string& word, const std::string& label){
-        std::pair<std::string, std::string> label_word_pair = std::make_pair(label, word);
+		std::pair<std::string, std::string> label_word_pair = std::make_pair(label, word);
 
-        if (label_word_posts.find(label_word_pair) != label_word_posts.end()) { //word found within the given label
-            return log(static_cast<double>(label_word_posts[label_word_pair]) / label_posts[label]);
-
-        } else if(word_posts.find(word) != word_posts.end()){ //word found outside of the given label
-            return log(static_cast<double>(word_posts[word]) / total_posts);
-
-		} else { //the word does not exist
-            return log(1.0 / (total_posts));
-        }
+		//word found within the given label
+		if (label_word_posts.find(label_word_pair) != label_word_posts.end()) { 
+			return log(static_cast<double>(label_word_posts[label_word_pair]) / label_posts[label]);
+		} 
+		else if(word_posts.find(word) != word_posts.end()){ //word found outside of the given label
+			return log(static_cast<double>(word_posts[word]) / total_posts);
+		} 
+		else { //the word does not exist
+			return log(1.0 / (total_posts));
+		}
 	}
 
 	set<string> unique_words(const string &str) {
@@ -116,9 +138,11 @@ void print_usage() {
 
 int main(int argc, char* argv[]) {
 
+	cout.precision(3);
+
 	//error checking
   if (argc != 3) {
-	if (argc == 4 && static_cast<string>(argv[3]) == "--debug") ;
+		if (argc == 4 && static_cast<string>(argv[3]) == "--debug");
 		else {
 			print_usage();
 			return 1;
@@ -138,8 +162,9 @@ int main(int argc, char* argv[]) {
 		return 1;
 	}
 	Classifier classifier;
-	classifier.train(train_file);
-	classifier.predict(test_file);
+	classifier.train(train_file, argc == 4);
+	cout << "\n";
+	classifier.predict(test_file, argc == 4);
 
 	return 0;
 }
