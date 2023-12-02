@@ -35,13 +35,13 @@ class Classifier {
 	void predict(csvstream &test_data){
 		int total_correct = 0; //correcly predicted
 		int total = 0; //total data given
-		cout << "trained on " << total_posts << " examples" << '\n';
+		cout << "trained on " << total_posts << " examples" << "\n\n";
 		cout << "test data:" << '\n';
-
-		map<string, double> label_scores; //This hold the label and their long scrores
 
 		map<string, string> row;
 		while (test_data >> row) {
+			map<string, double> label_scores; //This hold the label and their long scores
+
 			map<string, int>::iterator it = label_posts.begin(); //loops through all the labels that needs log-probability score 
 
 			string label = row["tag"];
@@ -50,24 +50,27 @@ class Classifier {
 			while(it != label_posts.end()) {
 				string predictLabel = it->first;
 				double logPredict = log(static_cast<double>(it->second)/total_posts); //initial lnP(C)
+				for(string word : post_words) {
+					double log_prob = makePredic(word, predictLabel);
+					logPredict += log_prob;
 
-				for(const string &word : post_words) {
-					logPredict += makePredic(word, predictLabel);
 				}
 				label_scores.insert(make_pair(predictLabel, logPredict));
 				it++;
 			}
+
 			map<string, double>::iterator it1 = label_scores.begin();
+
 			double max_value = it1->second;
 			string nameLabel = it1->first;
-			for(; it1 != label_scores.end(); ++it1) {
+			for(; it1 != label_scores.end(); it1++) { //compares the log-probability score  
   			 	if (it1 ->second > max_value) {
    			    	nameLabel = it1->first;
     		   		max_value = it1->second;
     			}
 			}
-			cout << " correct = " << label << ", " << "predicted = " << nameLabel << ", " << "log-probability score =" << max_value << '\n';
-			cout << " content = " << row["content"] << '\n';
+			cout << " correct = " << label << ", " << "predicted = " << nameLabel << ", " << "log-probability score = " << max_value << '\n';
+			cout << " content = " << row["content"] << "\n\n";
 			if (label == nameLabel)
 				total_correct++;
 			total++;
@@ -79,13 +82,10 @@ class Classifier {
         std::pair<std::string, std::string> label_word_pair = std::make_pair(label, word);
 
         if (label_word_posts.find(label_word_pair) != label_word_posts.end()) { //word found within the given label
-			map<pair<string, string>, int>::iterator it = label_word_posts.find(label_word_pair);
-			map<string, int>::iterator it1 = label_posts.find(label);
-            return log(static_cast<double>(it->second) / it1->second);
+            return log(static_cast<double>(label_word_posts[label_word_pair]) / label_posts[label]);
 
         } else if(word_posts.find(word) != word_posts.end()){ //word found outside of the given label
-			map<pair<string, string>, int>::iterator it = label_word_posts.find(label_word_pair);
-            return log(static_cast<double>(it->second) / total_posts);
+            return log(static_cast<double>(word_posts[word]) / total_posts);
 
 		} else { //the word does not exist
             return log(1.0 / (total_posts));
